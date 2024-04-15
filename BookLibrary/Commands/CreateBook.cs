@@ -1,24 +1,46 @@
 ﻿using BookLibrary.Entities;
 using MediatR;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookLibrary.Commands
 {
+    /// <summary>
+    /// Command to create a new book in the library.
+    /// </summary>
     public class CreateBook : IRequest<Book>
     {
-        public string Title { get; set; } = null!;
+        [Required]
+        [StringLength(100)]
+        public string Title { get; }
 
-        public string FirstName { get; set; } = null!;
+        [Required]
+        [StringLength(50)]
+        public string FirstName { get; }
 
-        public string LastName { get; set; } = null!;
+        [Required]
+        [StringLength(50)]
+        public string LastName { get; }
 
-        public int TotalCopies { get; set; }
+        [Range(0, int.MaxValue)]
+        public int TotalCopies { get; }
 
-        public int CopiesInUse { get; set; }
+        [Range(0, int.MaxValue)]
+        public int CopiesInUse { get; } = 0;  
 
         public string? Type { get; set; }
 
+        [StringLength(20)]
         public string? Isbn { get; set; }
 
+        [StringLength(50)]
         public string? Category { get; set; }
+
+        public CreateBook(string title, string firstName, string lastName, int totalCopies)
+        {
+            Title = title;
+            FirstName = firstName;
+            LastName = lastName;
+            TotalCopies = totalCopies;
+        }
     }
 }

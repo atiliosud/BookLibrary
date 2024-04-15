@@ -20,13 +20,16 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Get
 
 
 ODataConventionModelBuilder modelBuilder = new();
-builder.Services.AddControllers().AddOData(
-                options => options.EnableQueryFeatures(null).AddRouteComponents(
-                    routePrefix: "odata",
-                    model: modelBuilder.GetEdmModel())).AddJsonOptions(options =>
-                    {
-                        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                    });
+modelBuilder.EntitySet<Book>("Books");  
+
+builder.Services.AddControllers().AddOData(options =>
+{
+    options.Select().Filter().OrderBy().Expand().SetMaxTop(100); 
+    options.AddRouteComponents("odata", modelBuilder.GetEdmModel());
+}).AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -8,15 +8,28 @@ namespace BookLibrary.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class BooksCommandsController(IMediator mediator) : ControllerBase
+    public class BooksCommandsController : ControllerBase
     {
+        private readonly IMediator _mediator;
 
-        [HttpPost("create")]
-        public async Task<ActionResult<Book>> CreatePerson(CreateBook request)
+        public BooksCommandsController(IMediator mediator)
         {
-            var book = await mediator.Send(request);
-
-            return book;
+            _mediator = mediator;
         }
+
+        public async Task<ActionResult<Book>> CreateBook(CreateBook request)
+        {
+            try
+            {
+                var book = await _mediator.Send(request);
+                return Ok(book);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
     }
+
 }
