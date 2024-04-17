@@ -1,62 +1,109 @@
-import React, { useState } from 'react';
-import './App.css';
+import "devextreme/dist/css/dx.light.css";
+import React, { useState } from "react";
+import {
+  DataGrid,
+  Column,
+  Pager,
+  Paging,
+  Scrolling,
+} from "devextreme-react/data-grid";
+import {
+  Autocomplete,
+  Button,
+  SelectBox,
+} from "devextreme-react";
+import "./App.scss";
 
-function App() {
-    const [searchBy, setSearchBy] = useState('firstName');
-    const [searchValue, setSearchValue] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
+const books = [
+  { id: 1, title: "Book 1", author: "Author 1" },
+  { id: 2, title: "Book 2", author: "Author 2" },
+  { id: 3, title: "Book 3", author: "Author 3" },
+  // add more books here
+];
 
-    const handleSearch = () => {
-        // Lógica para consumir a API com base nos valores de searchBy e searchValue
-        fetch(`https://localhost:7176/Books?$filter=${searchBy} eq '${searchValue}'`)
-            .then(response => response.json())
-            .then(data => setSearchResults(data))
-            .catch(error => console.error('Erro ao buscar dados:', error));
-    };
+const BooksPage = () => {
+  const [searchValue, setSearchValue] = useState("");
+  const [selectedField, setSelectedField] = useState("title");
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [filterValue, setFilterValue] = useState([
+    ["title", "startswith", "B"],
+  ]);
+  const [selectedFilterOperation, setSelectedFilterOperation] =
+    useState("startswith");
+  const [searchField, setSearchField] = useState("title");
 
-    return (
-        <div>
-            <h1>Search Page</h1>
-            <label htmlFor="searchBy">Search By:</label>
-            <select id="searchBy" value={searchBy} onChange={e => setSearchBy(e.target.value)}>
-                <option value="firstName">First Name Authors</option>
-                <option value="lastName">Last Name Authors</option>
-                <option value="title">Book Title</option>
-                <option value="isbn">ISBN</option>
-            </select>
-            <br />
-            <label htmlFor="searchValue">Search Value:</label>
-            <input type="text" id="searchValue" value={searchValue} onChange={e => setSearchValue(e.target.value)} />
-            <br />
-            <button onClick={handleSearch}>Search</button>
-            <br />
-            <table>
-                <thead>
-                    <tr>
-                        <th>Book Title</th>
-                        <th>Publisher</th>
-                        <th>Authors</th>
-                        <th>Type</th>
-                        <th>ISBN</th>
-                        <th>Category</th>
-                        <th>Available Copies</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {searchResults.map(book => (
-                        <tr key={book.bookId}>
-                            <td>{book.title}</td>
-                            <td>{book.firstName} {book.lastName}</td>
-                            <td>{book.type}</td>
-                            <td>{book.isbn}</td>
-                            <td>{book.category}</td>
-                            <td>{book.copiesInUse} / {book.totalCopies}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
-}
+  const books = [
+    { id: 1, title: "Book 1", author: "Author 1" },
+    { id: 2, title: "Book 2", author: "Author 2" },
+    { id: 3, title: "Book 3", author: "Author 3" },
+    // add more books here
+  ];
 
-export default App;
+  const filteredBooks = books.filter((book) => {
+    if (searchValue === "") {
+      return true;
+    } else if (
+      book[selectedField].toLowerCase().includes(searchValue.toLowerCase())
+    ) {
+      return true;
+    }
+    return false;
+  });
+  const handleFilterValueChange = (newFilterValue) => {
+    setFilterValue(newFilterValue);
+  };
+  const handleSearchChange = (e) => {
+    setSearchValue(e.value);
+  };
+
+  const handleFieldChange = (e) => {
+    setSelectedField(e.value);
+  };
+
+  const handleItemSelect = (e) => {
+    setSelectedItems(e.addedItems);
+  };
+
+  return (
+      <div className="books-page">
+          <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
+            <h1 className="books-page__title">Books</h1>
+            <Button icon="add" className="books-page__search-button"></Button>
+          </div>
+      <div className="books-page__filter">
+        <SelectBox
+          items={["Title", "Author"]}
+          value={selectedField}
+          onValueChanged={handleFieldChange}
+          className="books-page__search-field-select"
+          label="Find By"
+        />
+        <Autocomplete
+          label="Search"
+          value={searchValue}
+          onChange={handleSearchChange}
+          className="books-page__search-input"
+        />
+        <Button icon="search" className="books-page__search-button"></Button>
+      </div>
+      <DataGrid
+        id="data-grid"
+        dataSource={filteredBooks}
+        showBorders={true}
+        keyExpr="id"
+        filterValue={filterValue}
+        onFilterValueChanged={handleFilterValueChange}
+      >
+        <div id="filter-builder-container" style={{ display: "none" }}></div>
+        <Scrolling mode="virtual" />
+        <Paging enabled={false} />
+        <Pager showPageSizeSelector={false} showInfo={false} />
+        <Column dataField="id" width={70} />
+        <Column dataField={searchField} width={200} />
+        <Column dataField="author" width={200} />
+      </DataGrid>
+    </div>
+  );
+};
+
+export default BooksPage;

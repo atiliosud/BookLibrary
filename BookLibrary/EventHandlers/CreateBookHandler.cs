@@ -6,8 +6,14 @@ using MediatR;
 
 namespace BookLibrary.EventHandlers
 {
-    public class CreateBookHandler(IRepository<Book> repositoryBook) : IRequestHandler<CreateBook, Book>
+    public class CreateBookHandler : IRequestHandler<CreateBook, Book>
     {
+        private readonly IRepository<Book> repositoryBook;
+
+        public CreateBookHandler(IRepository<Book> repositoryBook)
+        {
+            this.repositoryBook = repositoryBook;
+        }
 
         public async Task<Book> Handle(CreateBook request, CancellationToken cancellationToken)
         {

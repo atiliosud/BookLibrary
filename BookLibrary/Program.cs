@@ -1,13 +1,11 @@
-using System.Reflection;
-using System.Text.Json.Serialization;
 using BookLibrary.Entities;
 using BookLibrary.Repositories;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
