@@ -49,7 +49,11 @@ app.UseCors(builder =>
 
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Book API v1");
+});
+
 
 app.UseHttpsRedirection();
 

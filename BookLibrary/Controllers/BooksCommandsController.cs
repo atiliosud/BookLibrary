@@ -17,6 +17,7 @@ namespace BookLibrary.Controllers
             _mediator = mediator;
         }
 
+        [HttpPost]
         public async Task<ActionResult<Book>> CreateBook(CreateBook request)
         {
             try
